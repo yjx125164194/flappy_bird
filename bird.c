@@ -42,6 +42,7 @@ struct Location
 
 static int count = 0;
 static int speed = 500 * 1000;
+
 int random_wide(void)
 {
   return (rand() % (pillar_length *2 - 1) - (pillar_length - 1));
