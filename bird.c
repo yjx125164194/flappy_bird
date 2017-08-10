@@ -98,13 +98,13 @@ void shift_bird_location(struct Location bird_fp[2][2],int direction)
       bird_fp[1][0].y--;
       bird_fp[1][1].y--;
       break;
-    case bird_left:
+    case bird_right:
       bird_fp[0][0].x++;
       bird_fp[0][1].x++;
       bird_fp[1][0].x++;
       bird_fp[1][1].x++;
       break;
-    case bird_right:
+    case bird_left:
       bird_fp[0][0].x--;
       bird_fp[0][1].x--;
       bird_fp[1][0].x--;
@@ -133,7 +133,7 @@ int print_bird_location(struct Block fp[WIDE][LENGTH],
   }
   return 0;
 }
-int shift_block(struct Block fp[WIDE][LENGTH])
+int shift_block(struct Block fp[WIDE][LENGTH],int direction)
 {
   int i,j;
   static int roll = 0;
@@ -147,6 +147,7 @@ int shift_block(struct Block fp[WIDE][LENGTH])
     for(j = 0;j < LENGTH - 1;j++)
     {
       fp[i][j].content = fp[i][j+1].content;
+      fp[i][j].status = fp[i][j+1].status;
       if(fp[i][j].content == bird)
       {
         fp[i][j].content = empty;
@@ -177,7 +178,7 @@ int shift_block(struct Block fp[WIDE][LENGTH])
       fp[i][LENGTH-1].status = false;
     }
   }
-  shift_bird_location(bird_location,bird_down);
+  shift_bird_location(bird_location,direction);
   return print_bird_location(block,bird_location);
 }
 
@@ -218,6 +219,9 @@ void print_block(struct Block fp[WIDE][LENGTH])
 
 int main(int argc,char ** argv)
 {
+  int direction;
+  char key_in;
+
   srand((unsigned int) time(0));
 
   init_block(block);
@@ -225,9 +229,30 @@ int main(int argc,char ** argv)
   
   print_block(block);
 
-  while(1)
+  while(key_in = getchar())
   {
-    if(shift_block(block))
+    switch(key_in)
+    {
+      case '8':
+        direction = bird_up;
+        break;
+      case '4':
+        direction = bird_left;
+        break;
+      case '6':
+        direction = bird_right;
+        break;
+      case '5':
+        direction = bird_down;
+        break;
+      default:
+        break;
+    }
+    while(getchar() != '\n')
+    {
+      continue;
+    }
+    if(shift_block(block,direction))
     {
       break;
     }
