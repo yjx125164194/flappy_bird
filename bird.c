@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<stdbool.h>
-#include<curses.h>
+#include<termio.h>
 
 #define empty     0
 #define wall      1
@@ -214,14 +214,34 @@ void print_block(struct Block fp[WIDE][LENGTH])
     printf("\n");
   }
   count++;
-  sleep(1);
+  //sleep(1);
 }
+int sh_getch(void)
+{
+  int cr;
+  struct termios nts,ots;
+  
+  if(tcgetattr(0,&ots) < 0)
+    return EOF;
 
+  nts = ots;
+  cfmakeraw(&nts);
+  
+  if(tcsetattr(0,TCSANOW,&nts) < 0)
+    return EOF;
+
+  cr = getchar();
+  
+  if(tcsetattr(0,TCSANOW,&ots) < 0)
+    return EOF; 
+
+  return cr; 
+}
 
 int main(int argc,char ** argv)
 {
   int direction;
-
+  char ch;
   srand((unsigned int) time(0));
 
   init_block(block);
@@ -231,28 +251,29 @@ int main(int argc,char ** argv)
 
   while(1)
   {
-    switch(getchar())
+    switch(ch = sh_getch())
     {
-      case '8':
+      case 'w':
         direction = bird_up;
         break;
-      case '4':
+      case 'a':
         direction = bird_left;
         break;
-      case '6':
+      case 'd':
         direction = bird_right;
         break;
-      case '5':
+      case 's':
         direction = bird_down;
         break;
       default:
         direction = bird_down;
         break;
     }
-    while(getchar() != '\n')
+    setbuf(stdin,NULL);
+    /*while(getchar() != '\n')
     {
       continue;
-    }
+    }*/
     if(shift_block(block,direction))
     {
       break;
