@@ -10,7 +10,8 @@
 
 #define wall_wide     3
 #define pillar_wide   5
-#define pillar_length 5
+#define pillar_length 4
+#define pillar_gap    8
 
 #define LENGTH    100
 #define WIDE      20
@@ -22,6 +23,11 @@ struct Block
 }block[WIDE][LENGTH];
 
 static int count = 0;
+
+int random_wide(void)
+{
+  return (rand() % (pillar_length + 1));
+}
 
 void init_block(struct Block fp[WIDE][LENGTH])
 {
@@ -47,7 +53,12 @@ void init_block(struct Block fp[WIDE][LENGTH])
 void shift_block(struct Block fp[WIDE][LENGTH])
 {
   int i,j;
+  static int roll = 0;
 
+  if(!(count % (pillar_length + pillar_gap)))
+  {
+    roll = random_wide();
+  }
   for(i = 0;i < WIDE;i++)
   {
     for(j = 0;j < LENGTH - 1;j++)
@@ -58,9 +69,11 @@ void shift_block(struct Block fp[WIDE][LENGTH])
   
   for(i = 0;i < WIDE;i++)
   {
-    if((count%(pillar_length + 8) < pillar_length) 
-      &&  ((i >= wall_wide && i < wall_wide + pillar_wide)
-          || (i >= WIDE - pillar_wide - wall_wide && i < WIDE - wall_wide))
+    if(((count - 1)%(pillar_length + pillar_gap) < pillar_length) 
+      &&((i >= wall_wide 
+          && i < wall_wide + pillar_wide + roll)
+        ||(i >= WIDE - pillar_wide - wall_wide + roll
+          && i < WIDE - wall_wide))
       ) 
     {
       fp[i][LENGTH-1].content = pillar;
@@ -116,6 +129,8 @@ void print_block(struct Block fp[WIDE][LENGTH])
 
 int main(int argc,char ** argv)
 {
+  srand((unsigned int) time(0));
+
   init_block(block);
   while(1)
   {
