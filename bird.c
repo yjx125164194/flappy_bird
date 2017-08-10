@@ -13,14 +13,29 @@
 #define pillar_length 4
 #define pillar_gap    8
 
-#define LENGTH    100
+#define LENGTH    30
 #define WIDE      20
+
+#define bird_init_x  10
+#define bird_init_y  10
+
+#define bird_up     0
+#define bird_down   1
+#define bird_right  2
+#define bird_left   3
+
 
 struct Block 
 {
     _Bool status;
     int content;
 }block[WIDE][LENGTH];
+
+struct Location
+{
+    int x;
+    int y;
+}bird_location[2][2];
 
 static int count = 0;
 
@@ -49,8 +64,76 @@ void init_block(struct Block fp[WIDE][LENGTH])
       }
     }
   }
+  
+  fp[bird_init_x][bird_init_y].content = bird;
+  fp[bird_init_x+1][bird_init_y].content = bird;
+  fp[bird_init_x][bird_init_y+1].content = bird;
+  fp[bird_init_x+1][bird_init_y+1].content = bird;
+
 }
-void shift_block(struct Block fp[WIDE][LENGTH])
+void init_bird_location(struct Location bird_fp[2][2])
+{
+  bird_fp[0][0].x = bird_init_x;
+  bird_fp[0][0].y = bird_init_y;
+  bird_fp[0][1].x = bird_init_x;
+  bird_fp[0][1].y = bird_init_y+1;
+  bird_fp[1][0].x = bird_init_x+1;
+  bird_fp[1][0].y = bird_init_y;
+  bird_fp[1][1].x = bird_init_x+1;
+  bird_fp[1][1].y = bird_init_y+1;
+}
+void shift_bird_location(struct Location bird_fp[2][2],int direction)
+{
+  switch(direction)
+  {
+    case bird_up:
+      bird_fp[0][0].y++;
+      bird_fp[0][1].y++;
+      bird_fp[1][0].y++;
+      bird_fp[1][1].y++;
+      break;
+    case bird_down:
+      bird_fp[0][0].y--;
+      bird_fp[0][1].y--;
+      bird_fp[1][0].y--;
+      bird_fp[1][1].y--;
+      break;
+    case bird_right:
+      bird_fp[0][0].x++;
+      bird_fp[0][1].x++;
+      bird_fp[1][0].x++;
+      bird_fp[1][1].x++;
+      break;
+    case bird_left:
+      bird_fp[0][0].x--;
+      bird_fp[0][1].x--;
+      bird_fp[1][0].x--;
+      bird_fp[1][1].x--;
+    default:break;
+  }
+}
+int print_bird_location(struct Block fp[WIDE][LENGTH],
+                        struct Location bird_fp[2][2])
+{
+  int i,j;
+
+  for(i = 0;i < 2;i++)
+  {
+    for(j = 0;j < 2;j++)
+    {
+      if(fp[bird_fp[i][j].y][bird_fp[i][j].x].status)
+      {
+        return 1;
+      }
+      else
+      {      
+        fp[bird_fp[i][j].y][bird_fp[i][j].x].content = bird;
+      }
+    }
+  }
+  return 0;
+}
+int shift_block(struct Block fp[WIDE][LENGTH])
 {
   int i,j;
   static int roll = 0;
@@ -64,6 +147,10 @@ void shift_block(struct Block fp[WIDE][LENGTH])
     for(j = 0;j < LENGTH - 1;j++)
     {
       fp[i][j].content = fp[i][j+1].content;
+      if(fp[i][j].content == bird)
+      {
+        fp[i][j].content = empty;
+      }
     }
   }
   
@@ -90,6 +177,8 @@ void shift_block(struct Block fp[WIDE][LENGTH])
       fp[i][LENGTH-1].status = false;
     }
   }
+  shift_bird_location(bird_location,bird_down);
+  return print_bird_location(block,bird_location);
 }
 
 
@@ -132,10 +221,18 @@ int main(int argc,char ** argv)
   srand((unsigned int) time(0));
 
   init_block(block);
+  init_bird_location(bird_location);
+  
+  print_block(block);
+
   while(1)
   {
-    print_block(block); 
-    shift_block(block);
+    if(shift_block(block))
+    {
+      break;
+    }
+    print_block(block);
   }
+  printf("you dead!\n");
   return 0;
 }
