@@ -86,25 +86,25 @@ void shift_bird_location(struct Location bird_fp[2][2],int direction)
 {
   switch(direction)
   {
-    case bird_up:
+    case bird_down:
       bird_fp[0][0].y++;
       bird_fp[0][1].y++;
       bird_fp[1][0].y++;
       bird_fp[1][1].y++;
       break;
-    case bird_down:
+    case bird_up:
       bird_fp[0][0].y--;
       bird_fp[0][1].y--;
       bird_fp[1][0].y--;
       bird_fp[1][1].y--;
       break;
-    case bird_right:
+    case bird_left:
       bird_fp[0][0].x++;
       bird_fp[0][1].x++;
       bird_fp[1][0].x++;
       bird_fp[1][1].x++;
       break;
-    case bird_left:
+    case bird_right:
       bird_fp[0][0].x--;
       bird_fp[0][1].x--;
       bird_fp[1][0].x--;
