@@ -41,7 +41,7 @@ struct Location
 }bird_location[2][2];
 
 static int count = 0;
-
+static int speed = 500 * 1000;
 int random_wide(void)
 {
   return (rand() % (pillar_length + 1));
@@ -124,7 +124,11 @@ int print_bird_location(struct Block fp[WIDE][LENGTH],
   {
     for(j = 0;j < 2;j++)
     {
-      if(fp[bird_fp[i][j].y][bird_fp[i][j].x].status)
+      if(bird_fp[i][j].x < 0 || bird_fp[i][j].x >= LENGTH)
+      {
+        return 1;
+      }
+      else if(fp[bird_fp[i][j].y][bird_fp[i][j].x].status)
       {
         return 1;
       }
@@ -216,7 +220,7 @@ void print_block(struct Block fp[WIDE][LENGTH])
     printf("\n");
   }
   count++;
-  usleep(500000);
+  usleep(speed);
 }
 
 //windows can use getch()
@@ -315,6 +319,8 @@ int main(int argc,char ** argv)
     }
     print_block(block);
   }
-  printf("you dead!\n");
+  printf("\n************************************\n");
+  printf("you dead!you have moved %d distance!\n",count);
+  printf("************************************\n");
   return 0;
 }
