@@ -58,12 +58,17 @@ void shift_block(struct Block fp[WIDE][LENGTH])
   
   for(i = 0;i < WIDE;i++)
   {
-    if(count%(pillar_length + 8) < pillar_length 
-      && (i >= wall_wide && i < wall_wide + pillar_wide)
-      && (i > WIDE - pillar_wide - wall_wide && i < WIDE - wall_wide) 
+    if((count%(pillar_length + 8) < pillar_length) 
+      &&  ((i >= wall_wide && i < wall_wide + pillar_wide)
+          || (i >= WIDE - pillar_wide - wall_wide && i < WIDE - wall_wide))
       ) 
     {
       fp[i][LENGTH-1].content = pillar;
+      fp[i][LENGTH-1].status = true;
+    }
+    else if(i < wall_wide || i >=  WIDE - wall_wide)
+    {
+      fp[i][LENGTH-1].content = wall;
       fp[i][LENGTH-1].status = true;
     }
     else
