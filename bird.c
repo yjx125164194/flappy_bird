@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<stdbool.h>
+#include<curses.h>
 
 #define empty     0
 #define wall      1
@@ -220,7 +221,6 @@ void print_block(struct Block fp[WIDE][LENGTH])
 int main(int argc,char ** argv)
 {
   int direction;
-  char key_in;
 
   srand((unsigned int) time(0));
 
@@ -229,9 +229,9 @@ int main(int argc,char ** argv)
   
   print_block(block);
 
-  while(key_in = getchar())
+  while(1)
   {
-    switch(key_in)
+    switch(getchar())
     {
       case '8':
         direction = bird_up;
@@ -246,6 +246,7 @@ int main(int argc,char ** argv)
         direction = bird_down;
         break;
       default:
+        direction = bird_down;
         break;
     }
     while(getchar() != '\n')
