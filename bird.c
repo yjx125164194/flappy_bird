@@ -253,18 +253,20 @@ int main(int argc,char ** argv)
   {
     switch(ch = sh_getch())
     {
-      case 'w':
+      case '8':
         direction = bird_up;
         break;
-      case 'a':
+      case '4':
         direction = bird_left;
         break;
-      case 'd':
+      case '6':
         direction = bird_right;
         break;
-      case 's':
+      case '5':
         direction = bird_down;
         break;
+      case 'q':
+        exit(0);
       default:
         direction = bird_down;
         break;
