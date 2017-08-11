@@ -2,9 +2,7 @@
 #include<stdlib.h>
 #include<stdio.h>
 #include<stdbool.h>
-#include<termio.h>
-#include<unistd.h>
-#include<fcntl.h>
+#include"game.h"
 
 #define empty     0
 #define wall      1
@@ -18,6 +16,7 @@
 
 #define LENGTH    30
 #define WIDE      20
+#define SPEED	  500*1000
 
 #define bird_init_x  10
 #define bird_init_y  10
@@ -28,27 +27,14 @@
 #define bird_left   3
 
 
-struct Block 
-{
-    _Bool status;
-    int content;
-}block[WIDE][LENGTH];
-
-struct Location
-{
-    int x;
-    int y;
-}bird_location[2][2];
-
-typedef struct Block Block_type;
-typedef struct Location Location_type;
-
 static int count = 0;
-static int speed = 500 * 1000;
+
+Block_type block[WIDE][LENGTH];
+Location_type bird_location[2][2];
 
 int random_wide(void)
 {
-  return (rand() % (pillar_length *2 - 1) - (pillar_length - 1));
+  return (rand() % (pillar_length * 2 - 1) - (pillar_length - 1));
 }
 
 void init_block(Block_type fp[WIDE][LENGTH])
@@ -193,7 +179,6 @@ int shift_block(Block_type fp[WIDE][LENGTH],int direction)
   return print_bird_location(block,bird_location);
 }
 
-
 void print_block(Block_type fp[WIDE][LENGTH])
 {
   system("clear");
@@ -223,54 +208,9 @@ void print_block(Block_type fp[WIDE][LENGTH])
     }
     printf("\n");
   }
-  count++;
-  usleep(speed);
+  usleep(SPEED);
 }
 
-//windows can use getch()
-int sh_getch(void)
-{
-  int cr;
-  struct termios nts,ots;
-  
-  if(tcgetattr(0,&ots) < 0)
-    return EOF;
-
-  nts = ots;
-  cfmakeraw(&nts);
-  
-  if(tcsetattr(0,TCSANOW,&nts) < 0)
-    return EOF;
-
-  cr = getchar();
-  
-  if(tcsetattr(0,TCSANOW,&ots) < 0)
-    return EOF; 
-
-  return cr; 
-}
-//windows can use kbhit
-int kbhit(void)
-{
-  struct termios oldt,newt;
-  int ch;
-  int oldf;
-  tcgetattr(STDIN_FILENO,&oldt);
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON|ECHO);
-  tcsetattr(STDIN_FILENO,TCSANOW,&newt);
-  oldf = fcntl(STDIN_FILENO,F_GETFL,0);
-  fcntl(STDIN_FILENO,F_SETFL, oldf | O_NONBLOCK);
-  ch = getchar();
-  tcsetattr(STDIN_FILENO,TCSANOW,&oldt);  
-  fcntl(STDIN_FILENO,F_SETFL,oldf);
-  if(ch != EOF)
-  {
-    ungetc(ch,stdin);
-    return 1;
-  }
-  return 0;
-}
 
 int main(int argc,char ** argv)
 {
@@ -322,6 +262,7 @@ int main(int argc,char ** argv)
       break;
     }
     print_block(block);
+    count++;
   }
   printf("\n************************************\n");
   printf("you dead!you have moved %d distance!\n",count);
