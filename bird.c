@@ -4,11 +4,6 @@
 #include<stdbool.h>
 #include"game.h"
 
-#define empty     0
-#define wall      1
-#define pillar    2
-#define bird      3
-
 #define wall_wide     3
 #define pillar_wide   5
 #define pillar_length 4
@@ -135,7 +130,7 @@ int shift_block(Block_type fp[WIDE][LENGTH],int direction)
   int i,j;
   static int roll = 0;
 
-  if(!(count % (pillar_length + pillar_gap)))
+  if(!((count - 1) % (pillar_length + pillar_gap)))
   {
     roll = random_wide();
   }
@@ -209,6 +204,7 @@ void print_block(Block_type fp[WIDE][LENGTH])
     printf("\n");
   }
   usleep(SPEED);
+  count++;
 }
 
 
@@ -262,7 +258,6 @@ int main(int argc,char ** argv)
       break;
     }
     print_block(block);
-    count++;
   }
   printf("\n************************************\n");
   printf("you dead!you have moved %d distance!\n",count);
