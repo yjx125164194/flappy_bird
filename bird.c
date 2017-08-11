@@ -40,6 +40,9 @@ struct Location
     int y;
 }bird_location[2][2];
 
+typedef struct Block Block_type;
+typedef struct Location Location_type;
+
 static int count = 0;
 static int speed = 500 * 1000;
 
@@ -48,7 +51,7 @@ int random_wide(void)
   return (rand() % (pillar_length *2 - 1) - (pillar_length - 1));
 }
 
-void init_block(struct Block fp[WIDE][LENGTH])
+void init_block(Block_type fp[WIDE][LENGTH])
 {
   int i,j;
   for(i = 0;i < WIDE;i++)
@@ -75,7 +78,7 @@ void init_block(struct Block fp[WIDE][LENGTH])
   fp[bird_init_x+1][bird_init_y+1].content = bird;
 
 }
-void init_bird_location(struct Location bird_fp[2][2])
+void init_bird_location(Location_type bird_fp[2][2])
 {
   bird_fp[0][0].x = bird_init_x;
   bird_fp[0][0].y = bird_init_y;
@@ -86,7 +89,7 @@ void init_bird_location(struct Location bird_fp[2][2])
   bird_fp[1][1].x = bird_init_x+1;
   bird_fp[1][1].y = bird_init_y+1;
 }
-void shift_bird_location(struct Location bird_fp[2][2],int direction)
+void shift_bird_location(Location_type bird_fp[2][2],int direction)
 {
   switch(direction)
   {
@@ -116,8 +119,8 @@ void shift_bird_location(struct Location bird_fp[2][2],int direction)
     default:break;
   }
 }
-int print_bird_location(struct Block fp[WIDE][LENGTH],
-                        struct Location bird_fp[2][2])
+int print_bird_location(Block_type fp[WIDE][LENGTH],
+                        Location_type bird_fp[2][2])
 {
   int i,j;
 
@@ -141,7 +144,7 @@ int print_bird_location(struct Block fp[WIDE][LENGTH],
   }
   return 0;
 }
-int shift_block(struct Block fp[WIDE][LENGTH],int direction)
+int shift_block(Block_type fp[WIDE][LENGTH],int direction)
 {
   int i,j;
   static int roll = 0;
@@ -191,7 +194,7 @@ int shift_block(struct Block fp[WIDE][LENGTH],int direction)
 }
 
 
-void print_block(struct Block fp[WIDE][LENGTH])
+void print_block(Block_type fp[WIDE][LENGTH])
 {
   system("clear");
   
