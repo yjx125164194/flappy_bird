@@ -1,9 +1,19 @@
 #include<stdbool.h>
 
+enum Content
+{
+	empty,
+	wall,
+	snake,
+	bird,
+	ball,
+	pillar
+};
+
 struct Block
 {
 	_Bool status;
-	int   content;
+	enum Content content;
 };
 
 struct Location
